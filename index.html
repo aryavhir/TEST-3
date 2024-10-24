@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusGaming - Gaming Community Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .neon-text {
+            text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7;
+        }
+        .game-card:hover .game-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .game-overlay {
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <script src="https://dev-adjs-an.hydro.online"></script>
+    <!-- Navigation -->
+    <nav class="bg-gray-900 border-b border-purple-500/20">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-purple-500 neon-text">NEXUS</h1>
+                    <div class="hidden md:flex space-x-8 ml-12">
+                        <a href="#" class="text-gray-300 hover:text-purple-400">Games</a>
+                        <a href="#" class="text-gray-300 hover:text-purple-400">News</a>
+                        <a href="#" class="text-gray-300 hover:text-purple-400">Tournaments</a>
+                        <a href="#" class="text-gray-300 hover:text-purple-400">Leaderboard</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg">Sign In</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative h-[500px] overflow-hidden">
+        <img src="https://images.ladbible.com/resize?type=webp&quality=70&width=1920&fit=contain&gravity=auto&url=https://images.ladbiblegroup.com/v3/assets/bltbc1876152fcd9f07/blt30e345e2b05015a0/66100af1d4ee6cd3d7d74449/Cyber.png" alt="Featured Game" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent">
+            <div class="max-w-7xl mx-auto px-4 h-full flex items-center">
+                <div class="max-w-2xl">
+                    <span class="text-purple-400 font-semibold">NEW RELEASE</span>
+                    <h2 class="text-4xl md:text-6xl font-bold mt-2 mb-4">Epic Adventure Awaits</h2>
+                    <p class="text-gray-300 text-lg mb-6">Embark on an incredible journey through mystical realms and face legendary challenges in this groundbreaking new release.</p>
+                    <div class="flex space-x-4">
+                        <button class="bg-purple-600 hover:bg-purple-700 px-8 py-3 rounded-lg font-semibold">Play Now</button>
+                        <button class="bg-gray-800 hover:bg-gray-700 px-8 py-3 rounded-lg font-semibold">Learn More</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-12">
+        <!-- Featured Games -->
+        <section class="mb-16">
+            <h3 class="text-2xl font-bold mb-8">Trending Games</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Game Card 1 -->
+                <div class="game-card relative rounded-lg overflow-hidden group">
+                    <img src="https://www.cyberpunk.net/build/images/social-thumbnail-en-ddcf4d23.jpg" alt="Game 1" class="w-full h-64 object-cover">
+                    <div class="game-overlay absolute inset-0 bg-gradient-to-t from-purple-900/90 via-purple-900/50 to-transparent opacity-0 p-6 flex flex-col justify-end">
+                        <h4 class="text-xl font-bold">Cyber Legends</h4>
+                        <p class="text-gray-300 text-sm mb-4">Multiplayer • Action</p>
+                        <div class="flex justify-between items-center">
+                            <span class="bg-purple-500 px-3 py-1 rounded-full text-sm">4.9 ★</span>
+                            <button class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">Play Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Card 2 -->
+                <div class="game-card relative rounded-lg overflow-hidden group">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRK2g4FDBu_CxIOwtqwpUK0DelJO-_mL7IaEg&s" alt="Game 2" class="w-full h-64 object-cover">
+                    <div class="game-overlay absolute inset-0 bg-gradient-to-t from-purple-900/90 via-purple-900/50 to-transparent opacity-0 p-6 flex flex-col justify-end">
+                        <h4 class="text-xl font-bold">GOD of WAR</h4>
+                        <p class="text-gray-300 text-sm mb-4">RPG • Adventure</p>
+                        <div class="flex justify-between items-center">
+                            <span class="bg-purple-500 px-3 py-1 rounded-full text-sm">4.7 ★</span>
+                            <button class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">Play Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Card 3 -->
+                <div class="game-card relative rounded-lg overflow-hidden group">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNAO7vlLgE3BNaIpNahaEaAVNjm0bTRi-VpQ&s" alt="Game 3" class="w-full h-64 object-cover">
+                    <div class="game-overlay absolute inset-0 bg-gradient-to-t from-purple-900/90 via-purple-900/50 to-transparent opacity-0 p-6 flex flex-col justify-end">
+                        <h4 class="text-xl font-bold">Cyberpunk</h4>
+                        <p class="text-gray-300 text-sm mb-4">Strategy • MMO</p>
+                        <div class="flex justify-between items-center">
+                            <span class="bg-purple-500 px-3 py-1 rounded-full text-sm">4.8 ★</span>
+                            <button class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">Play Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Card 4 -->
+                <div class="game-card relative rounded-lg overflow-hidden group">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYD-Fa3NK8oWJ55eFgOX_TCzRfVMTfDJiqmQ&s" alt="Game 4" class="w-full h-64 object-cover">
+                    <div class="game-overlay absolute inset-0 bg-gradient-to-t from-purple-900/90 via-purple-900/50 to-transparent opacity-0 p-6 flex flex-col justify-end">
+                        <h4 class="text-xl font-bold">GTA</h4>
+                        <p class="text-gray-300 text-sm mb-4">Battle Royale</p>
+                        <div class="flex justify-between items-center">
+                            <span class="bg-purple-500 px-3 py-1 rounded-full text-sm">4.6 ★</span>
+                            <button class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">Play Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Tournaments & Leaderboard -->
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Live Tournaments -->
+            <div class="md:col-span-2 bg-gray-800 rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-6">Live Tournaments</h3>
+                <div class="space-y-4">
+                    <!-- Tournament 1 -->
+                    <div class="bg-gray-700 rounded-lg p-4 flex items-center justify-between">
+                        <div>
+                            <h4 class="font-semibold">Cyber Legends Championship</h4>
+                            <p class="text-sm text-gray-400">Prize Pool: $10,000</p>
+                        </div>
+                        <button class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">Join Now</button>
+                    </div>
+                    <!-- Tournament 2 -->
+                    <div class="bg-gray-700 rounded-lg p-4 flex items-center justify-between">
+                        <div>
+                            <h4 class="font-semibold">Space Warriors League</h4>
+                            <p class="text-sm text-gray-400">Prize Pool: $5,000</p>
+                        </div>
+                        <button class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm">Join Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard -->
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-6">Top Players</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-purple-400 font-bold">#1</span>
+                            <img src="data:image/jpeg;base64,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" alt="Player" class="w-8 h-8 rounded-full">
+                            <span>ProGamer123</span>
+                        </div>
+                        <span class="text-purple-400">2850</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-purple-400 font-bold">#2</span>
+                            <img src="https://picsum.photos/40/40?random=7" alt="Player" class="w-8 h-8 rounded-full">
+                            <span>EpicWarrior</span>
+                        </div>
+                        <span class="text-purple-400">2720</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-purple-400 font-bold">#3</span>
+                            <img src="https://picsum.photos/40/40?random=8" alt="Player" class="w-8 h-8 rounded-full">
+                            <span>LegendSlayer</span>
+                        </div>
+                        <span class="text-purple-400">2695</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 mt-12 py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h4 class="text-xl font-bold text-purple-500 mb-4">NEXUS</h4>
+                    <p class="text-gray-400">Your ultimate gaming destination.</p>
+                </div>
+                <div>
+                    <h5 class="font-semibold mb-4">Quick Links</h5>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-purple-400">Games</a></li>
+                        <li><a href="#" class="hover:text-purple-400">Tournaments</a></li>
+                        <li><a href="#" class="hover:text-purple-400">News</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-semibold mb-4">Support</h5>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-purple-400">Help Center</a></li>
+                        <li><a href="#" class="hover:text-purple-400">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-purple-400">FAQs</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-semibold mb-4">Connect</h5>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-purple-400">Discord</a>
+                        <a href="#" class="text-gray-400 hover:text-purple-400">Twitter</a>
+                        <a href="#" class="text-gray-400 hover:text-purple-400">Twitch</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Nexus Gaming. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
