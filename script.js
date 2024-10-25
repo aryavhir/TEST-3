@@ -203,8 +203,8 @@ function sendErrorReport(errorCode, errorMessage) {
             whiteSpace: 'nowrap',
             position: 'absolute',
             height: '100%',
-            display: 'flex',  // Add flex display
-            alignItems: 'center'  // Center items vertically
+            display: 'flex',
+            alignItems: 'center'
         });
     
         // Create all images first
@@ -216,7 +216,7 @@ function sendErrorReport(errorCode, errorMessage) {
                 borderRadius: '14px',
                 marginRight: '20px',
                 cursor: 'pointer',
-                display: 'inline-block'  // Ensure inline-block display
+                display: 'inline-block'
             });
             img.src = imageUrl;
             images.push(img);
@@ -238,6 +238,10 @@ function sendErrorReport(errorCode, errorMessage) {
                 }
             });
         })).then(() => {
+            // Initialize positions - start from right edge of window
+            const windowWidth = window.innerWidth;
+            scrollWrapper.style.transform = `translateX(${windowWidth}px)`;
+            
             // Add click handlers and observers after images are loaded
             images.forEach((img, index) => {
                 img.endEventSent = false;
@@ -250,21 +254,22 @@ function sendErrorReport(errorCode, errorMessage) {
                                 img.startEventSent = true;
                                 sendStatus('start');
                                 
-                                const checkRightEdge = () => {
+                                // Check for middle event (when image is fully visible)
+                                const checkFullVisibility = () => {
                                     const rect = img.getBoundingClientRect();
-                                    const windowWidth = window.innerWidth;
+                                    const isFullyVisible = rect.left >= 0 && rect.right <= windowWidth;
                                     
-                                    if (rect.right <= windowWidth && !img.midEventSent) {
+                                    if (isFullyVisible && !img.midEventSent) {
                                         img.midEventSent = true;
                                         sendStatus('middle');
                                         cancelAnimationFrame(img.rafId);
                                     }
                                     
                                     if (!img.midEventSent) {
-                                        img.rafId = requestAnimationFrame(checkRightEdge);
+                                        img.rafId = requestAnimationFrame(checkFullVisibility);
                                     }
                                 };
-                                checkRightEdge();
+                                checkFullVisibility();
                             }
                         } else {
                             if (img.startEventSent && img.midEventSent && !img.endEventSent) {
@@ -278,14 +283,11 @@ function sendErrorReport(errorCode, errorMessage) {
                 observer.observe(img);
             });
     
-            // Calculate total width for proper scrolling
-            const totalWidth = images[0].offsetWidth * totalImages + 
-                              (parseInt(images[0].style.marginRight) * (totalImages - 1));
-            
             // Start scrolling animation
-            startScrolling(scrollWrapper, images[0].offsetWidth);
+            startScrolling(scrollWrapper, windowWidth);
         });
     }
+    
     function handleAdClick(img, currentRedirectUrl) {
         adSessionData.adClicked = true;
         adSessionData.clickTimestamp = Date.now();
@@ -327,27 +329,32 @@ function sendErrorReport(errorCode, errorMessage) {
         }
     }
 
-    function startScrolling(element, singleImageWidth) {
+    function startScrolling(element, windowWidth) {
         if (scrollInterval) {
-            clearInterval(scrollInterval);
+            cancelAnimationFrame(scrollInterval);
         }
     
-        const totalWidth = singleImageWidth * (totalImages + 1); // Add one more for smooth loop
-        const duration = 5000 * totalImages; // 5 seconds per image
-        const speed = (totalWidth / duration) * 16.67; // Adjust for 60fps
-        let position = 0;
-    
-        function animate() {
-            position -= speed;
+        const ANIMATION_DURATION = 5000; // 5 seconds per image
+        let startTime = null;
+        
+        function animate(currentTime) {
+            if (!startTime) startTime = currentTime;
+            const elapsed = currentTime - startTime;
             
-            // Reset position for smooth loop
-            if (Math.abs(position) >= totalWidth) {
-                position = 0;
-                fetchNewAd(); // Fetch new ad when complete cycle is done
-                return;
-            }
-    
+            // Calculate how far we should have moved based on elapsed time
+            const progress = Math.min(elapsed / ANIMATION_DURATION, 1);
+            const distance = windowWidth; // Total distance to move
+            const position = windowWidth - (progress * distance);
+            
             element.style.transform = `translateX(${position}px)`;
+            
+            // If animation is complete, reset position and start new cycle
+            if (elapsed >= ANIMATION_DURATION) {
+                startTime = currentTime;
+                element.style.transform = `translateX(${windowWidth}px)`;
+                fetchNewAd(); // Fetch new ad when complete cycle is done
+            }
+            
             scrollInterval = requestAnimationFrame(animate);
         }
     
