@@ -278,15 +278,10 @@
                 observer.observe(img);
             });
 
-            // Calculate total width for proper scrolling
-            const totalWidth = images[0].offsetWidth * totalImages + 
-                              (parseInt(images[0].style.marginRight) * (totalImages - 1));
-            
-            // Start scrolling animation
-            startScrolling(scrollWrapper, images[0].offsetWidth);
+            const singleImageWidth = images[0].offsetWidth;
+            startScrolling(scrollWrapper, singleImageWidth);
         });
     }
-
     function handleAdClick(img, currentRedirectUrl) {
         adSessionData.adClicked = true;
         adSessionData.clickTimestamp = Date.now();
@@ -327,34 +322,53 @@
             sendErrorReport('CLICK_TRACK_ERROR', error.message);
         }
     }
-
     function startScrolling(element, singleImageWidth) {
         if (scrollInterval) {
             clearInterval(scrollInterval);
         }
-
-        const totalWidth = singleImageWidth * (totalImages + 1); // Add one more for smooth loop
-        const duration = 5000 * totalImages; // 5 seconds per image
-        const speed = (totalWidth / duration) * 16.67; // Adjust for 60fps
-        let position = 0;
-
-        function animate() {
-            position -= speed;
-            
-            // Reset position for smooth loop
-            if (Math.abs(position) >= totalWidth) {
-                position = 0;
-                fetchNewAd(); // Fetch new ad when complete cycle is done
-                return;
+    
+        const duration = 5000; // 5 seconds for each image
+        const speed = singleImageWidth / duration; 
+        let position = window.innerWidth; // Start from right edge of window
+        let lastTimestamp = 0;
+        let animationComplete = false;
+    
+        function animate(timestamp) {
+            if (!lastTimestamp) lastTimestamp = timestamp;
+            const elapsed = timestamp - lastTimestamp;
+            position -= speed * elapsed;
+    
+            // Check if animation should complete
+            if (position <= -singleImageWidth * totalImages) {
+                if (!animationComplete) {
+                    animationComplete = true;
+                    // Ensure last image is fully out of view
+                    element.style.transform = `translateX(${-(singleImageWidth * totalImages + window.innerWidth)}px)`;
+                    
+                    // Force the end event for the last image
+                    const lastImage = element.children[totalImages - 1];
+                    if (lastImage && lastImage.startEventSent && lastImage.midEventSent && !lastImage.endEventSent) {
+                        lastImage.endEventSent = true;
+                        sendStatus('end');
+                    }
+    
+                    // Wait for status to be sent before fetching new ad
+                    setTimeout(() => {
+                        fetchNewAd();
+                    }, 200);
+                    return;
+                }
             }
-
+    
             element.style.transform = `translateX(${position}px)`;
-            scrollInterval = requestAnimationFrame(animate);
+            lastTimestamp = timestamp;
+            if (!animationComplete) {
+                scrollInterval = requestAnimationFrame(animate);
+            }
         }
-
+    
         scrollInterval = requestAnimationFrame(animate);
     }
-
     function clearAd() {
         if (adContainer) {
             adContainer.style.display = 'none';
