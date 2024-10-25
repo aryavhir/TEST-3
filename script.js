@@ -197,41 +197,52 @@ function sendErrorReport(errorCode, errorMessage) {
     function displayBanner() {
         if (!imageUrl || !adContainer) return;
         adContainer.innerHTML = '';
+        
         const scrollWrapper = document.createElement('div');
-        scrollWrapper.style.whiteSpace = 'nowrap';
-        scrollWrapper.style.position = 'absolute';
-        scrollWrapper.style.height = '100%';
+        Object.assign(scrollWrapper.style, {
+            whiteSpace: 'nowrap',
+            position: 'absolute',
+            height: '100%',
+            display: 'flex',  // Add flex display
+            alignItems: 'center'  // Center items vertically
+        });
     
-        const imageLoadPromises = [];
-    
+        // Create all images first
+        const images = [];
         for (let i = 0; i < totalImages; i++) {
-            imageLoadPromises.push(addImage(scrollWrapper, i));
+            const img = document.createElement('img');
+            Object.assign(img.style, {
+                height: '100%',
+                borderRadius: '14px',
+                marginRight: '20px',
+                cursor: 'pointer',
+                display: 'inline-block'  // Ensure inline-block display
+            });
+            img.src = imageUrl;
+            images.push(img);
+            scrollWrapper.appendChild(img);
         }
     
         adContainer.appendChild(scrollWrapper);
         adContainer.style.display = 'block';
         isAdClosed = false;
     
-        Promise.all(imageLoadPromises).then(() => {
-            const singleImageWidth = scrollWrapper.firstChild.offsetWidth;
-            startScrolling(scrollWrapper, singleImageWidth);
-        }).catch((error) => {
-            console.error("Error loading images:", error);
-        });
-    }
-
-    function addImage(scrollWrapper, index) {
-        return new Promise((resolve, reject) => {
-            const img = document.createElement('img');
-            img.src = imageUrl;
-            img.style.height = '100%';
-            img.style.borderRadius = '14px';
-            img.style.marginRight = '20px';
-            img.style.cursor = 'pointer';
-            const currentRedirectUrl = redirectUrl;
-        
-            img.onload = () => {
-                img.endEventSent = false; // Add this flag
+        // Wait for all images to load
+        Promise.all(images.map(img => {
+            return new Promise((resolve) => {
+                if (img.complete) {
+                    resolve();
+                } else {
+                    img.onload = () => resolve();
+                    img.onerror = () => resolve(); // Handle error case
+                }
+            });
+        })).then(() => {
+            // Add click handlers and observers after images are loaded
+            images.forEach((img, index) => {
+                img.endEventSent = false;
+                img.onclick = () => handleAdClick(img, redirectUrl);
+                
                 const observer = new IntersectionObserver(entries => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
@@ -239,8 +250,7 @@ function sendErrorReport(errorCode, errorMessage) {
                                 img.startEventSent = true;
                                 sendStatus('start');
                                 
-                                // Start checking right edge when image enters view
-                                checkRightEdge = () => {
+                                const checkRightEdge = () => {
                                     const rect = img.getBoundingClientRect();
                                     const windowWidth = window.innerWidth;
                                     
@@ -258,29 +268,22 @@ function sendErrorReport(errorCode, errorMessage) {
                             }
                         } else {
                             if (img.startEventSent && img.midEventSent && !img.endEventSent) {
-                                img.endEventSent = true; // Mark end event as sent
+                                img.endEventSent = true;
                                 sendStatus('end');
-                                if (index === totalImages - 1) {
-                                    // Don't call fetchNewAd here anymore
-                                    // It will be handled by the animation end
-                                }
                             }
                         }
                     });
                 }, { threshold: [0] });
-        
+                
                 observer.observe(img);
-                resolve();
-            };
+            });
     
-            img.onerror = () => {
-                console.error('Image failed to load:', imageUrl);
-                reject('Image load error');
-            };
-    
-            img.onclick = () => handleAdClick(img, currentRedirectUrl);
-    
-            scrollWrapper.appendChild(img);
+            // Calculate total width for proper scrolling
+            const totalWidth = images[0].offsetWidth * totalImages + 
+                              (parseInt(images[0].style.marginRight) * (totalImages - 1));
+            
+            // Start scrolling animation
+            startScrolling(scrollWrapper, images[0].offsetWidth);
         });
     }
     function handleAdClick(img, currentRedirectUrl) {
@@ -329,49 +332,27 @@ function sendErrorReport(errorCode, errorMessage) {
             clearInterval(scrollInterval);
         }
     
-        const duration = 5000; // 5 seconds for each image
-        const speed = singleImageWidth / duration; 
-        let position = window.innerWidth;
-        let lastTimestamp = 0;
-        let animationComplete = false;
+        const totalWidth = singleImageWidth * (totalImages + 1); // Add one more for smooth loop
+        const duration = 5000 * totalImages; // 5 seconds per image
+        const speed = (totalWidth / duration) * 16.67; // Adjust for 60fps
+        let position = 0;
     
-        function animate(timestamp) {
-            if (!lastTimestamp) lastTimestamp = timestamp;
-            const elapsed = timestamp - lastTimestamp;
-            position -= speed * elapsed;
-    
-            // Check if animation should complete
-            if (position <= -singleImageWidth * totalImages) {
-                if (!animationComplete) {
-                    animationComplete = true;
-                    // Ensure last image is fully out of view
-                    element.style.transform = `translateX(${-(singleImageWidth * totalImages + window.innerWidth)}px)`;
-                    
-                    // Force the end event for the last image
-                    const lastImage = element.children[totalImages - 1];
-                    if (lastImage && lastImage.startEventSent && lastImage.midEventSent && !lastImage.endEventSent) {
-                        lastImage.endEventSent = true;
-                        sendStatus('end');
-                    }
-    
-                    // Wait for status to be sent before fetching new ad
-                    setTimeout(() => {
-                        fetchNewAd();
-                    }, 200);
-                    return;
-                }
+        function animate() {
+            position -= speed;
+            
+            // Reset position for smooth loop
+            if (Math.abs(position) >= totalWidth) {
+                position = 0;
+                fetchNewAd(); // Fetch new ad when complete cycle is done
+                return;
             }
     
             element.style.transform = `translateX(${position}px)`;
-            lastTimestamp = timestamp;
-            if (!animationComplete) {
-                scrollInterval = requestAnimationFrame(animate);
-            }
+            scrollInterval = requestAnimationFrame(animate);
         }
     
         scrollInterval = requestAnimationFrame(animate);
     }
-
     function clearAd() {
         if (adContainer) {
             adContainer.style.display = 'none';
